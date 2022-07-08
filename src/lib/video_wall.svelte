@@ -4,7 +4,7 @@
 	import { backOut } from 'svelte/easing';
 
     let viewWidth;
-    let videoWidth = 600;
+    let videoWidth = 720;
     let videos = ["one", "two", "three", "four", "five"];
 
     
@@ -33,6 +33,7 @@
         e.wheelDeltaY > 0 ? slideVideosRight() : slideVideosLeft();
     }
 
+    $:videoWidth = viewWidth > 900 ? 720 : 480;
     $:centerPosition = ((viewWidth / 2) - (videoWidth / 2));
   
 
@@ -41,14 +42,16 @@
 <style>
     .video_wall, .video_container, .video_navigation{
         box-sizing: border-box;
-        height: 100%;
         margin: 0;
         padding: 0;
     }
     .video_wall{
-        height: 100vh; /* remember to remove */
-        overflow-x: hidden;
-        overflow-y: hidden;
+        align-items: center;
+        display: grid;
+        height: 70vh;
+        margin: 15vh 0;
+        overflow: hidden;
+        position: relative;
         width: 100%;
     }
     .video_container{
@@ -58,8 +61,8 @@
     }
     .video_navigation{
         background-color: aqua;
-        position: fixed;
-        top: 0;
+        height: 100%;
+        position: absolute;
         width: 50px;
         z-index: 2;
     }
@@ -78,7 +81,7 @@
         {#each videos as video}
             <VideoCard width={videoWidth} />
         {/each}
-        <div class="video_navigation float_left" on:click={()=>{slideVideosLeft()}}></div>
-        <div class="video_navigation float_right" on:click={()=>{slideVideosRight()}}></div>
     </div>
+    <div class="video_navigation float_left" on:click={()=>{slideVideosLeft()}}></div>
+    <div class="video_navigation float_right" on:click={()=>{slideVideosRight()}}></div>
 </div>

@@ -6,10 +6,10 @@
     .video_card {
         border: 1px solid red;
         display: inline-block;
-        height: 225px;
+        height: 270px;
         margin: 0 20px 0 0;
         position: relative;
-        width: 400px;
+        width: 480px;
     }
 </style>
 
