@@ -1,17 +1,17 @@
 <script>
     import VideoCard from "$lib/video_card.svelte";
     import { tweened } from 'svelte/motion';
-	import { backOut } from 'svelte/easing';
+	import { expoOut } from 'svelte/easing';
 
     let viewWidth;
     let videoWidth = 720;
-    let videos = ["one", "two", "three", "four", "five"];
+    let videos = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
 
     
 
     const videoAtCenter = tweened(1, {
 		duration: 400,
-		easing: backOut
+		easing: expoOut
 	});
 
     const slideVideosRight = () => {
@@ -64,7 +64,7 @@
         height: 100%;
         position: absolute;
         width: 50px;
-        z-index: 2;
+        z-index: 3;
     }
     .video_navigation.float_left{
         left: 0;
@@ -74,14 +74,14 @@
     }
 </style>
 
-<svelte:window bind:innerWidth={viewWidth} />
+<!-- <svelte:window bind:innerWidth={viewWidth} /> -->
 
-<div class="video_wall" on:mousewheel={(e)=>scrollVideos(e)}>
-    <div class="video_container" style="margin-left:{centerPosition + (videoWidth * (0 - $videoAtCenter))}px;">
-        {#each videos as video}
-            <VideoCard width={videoWidth} />
+<div class="video_wall" on:mousewheel={(e)=>scrollVideos(e)} bind:clientWidth={viewWidth}>
+    <div class="video_container" style="margin-left:{centerPosition + ((videoWidth + 42) * (0 - $videoAtCenter))}px;">
+        {#each videos as video, i}
+            <VideoCard width={videoWidth} isAtCenter={i === $videoAtCenter}/>
         {/each}
     </div>
-    <div class="video_navigation float_left" on:click={()=>{slideVideosLeft()}}></div>
-    <div class="video_navigation float_right" on:click={()=>{slideVideosRight()}}></div>
+    <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
+    <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
 </div>
