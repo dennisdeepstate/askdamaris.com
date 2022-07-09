@@ -15,23 +15,28 @@
 		easing: expoOut
 	});
 
+    const canSlideRight = () => $videoAtCenter > 0;
+    const canSlideLeft = () => $videoAtCenter < videos.length - 1;
+
     const slideVideosRight = () => {
-        if($videoAtCenter > 0) {
-            videoAtCenter.set(Math.ceil($videoAtCenter) - 1);
-            
-        }
+        if(canSlideRight()) videoAtCenter.set(Math.ceil($videoAtCenter) - 1);
         return;
     }
 
     const slideVideosLeft = () => {
-        if($videoAtCenter < videos.length - 1) {
-            videoAtCenter.set(Math.floor($videoAtCenter) + 1);
-        }
+        if(canSlideLeft()) videoAtCenter.set(Math.floor($videoAtCenter) + 1);
         return;
     }
 
     const scrollVideos = (e) => {
-        e.wheelDeltaY > 0 ? slideVideosRight() : slideVideosLeft();
+        if(e.wheelDeltaY > 0 && canSlideRight()) {
+            e.preventDefault();
+            slideVideosRight();
+        }
+        if(e.wheelDeltaY < 0 && canSlideLeft()) {
+            e.preventDefault();
+            slideVideosLeft();
+        }
     }
 
     $:videoWidth = viewWidth > 900 ? 720 : 480;
