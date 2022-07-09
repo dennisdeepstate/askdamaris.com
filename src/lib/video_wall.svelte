@@ -94,7 +94,7 @@
         {/each}
     </div>
     {#key Math.floor($videoAtCenter)}
-        <h1 class="video_caption" transition:fly={{duration:200, y:40}}>{videos[Math.floor($videoAtCenter)]}</h1>
+        <h1 class="video_caption" transition:fly={{duration:400, y:40}}>{videos[Math.floor($videoAtCenter)]}</h1>
     {/key}
     <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
     <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
