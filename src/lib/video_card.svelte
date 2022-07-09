@@ -16,4 +16,6 @@
     }
 </style>
 
-<div class="video_card" style="height: {width * 0.5625}px; width: {width}px; {isAtCenter ? "transform: scale(1.2); z-index:2;" : "transform: scale(1); z-index:1;"}"> </div>
+<div    class="video_card"
+        style="height: {width * 0.5625}px; width: {width}px; {isAtCenter ? "transform: scale(1.2); z-index:2;" : "transform: scale(1); z-index:1;"}">
+</div>

@@ -2,6 +2,7 @@
     import VideoCard from "$lib/video_card.svelte";
     import { tweened } from 'svelte/motion';
 	import { expoOut } from 'svelte/easing';
+    import { fly } from 'svelte/transition';
 
     let viewWidth;
     let videoWidth = 720;
@@ -36,7 +37,6 @@
     $:videoWidth = viewWidth > 900 ? 720 : 480;
     $:centerPosition = ((viewWidth / 2) - (videoWidth / 2));
   
-
 </script>
 
 <style>
@@ -52,6 +52,7 @@
         margin: 15vh 0;
         overflow: hidden;
         position: relative;
+        text-align: center;
         width: 100%;
     }
     .video_container{
@@ -59,12 +60,22 @@
         white-space: nowrap;
         width: 100%;
     }
+    .video_caption{
+        bottom: 1em;
+        font-size: 3.5em;
+        font-weight: bold;
+        margin: 0;
+        position: absolute;
+        text-transform: uppercase;
+        width: 100%;
+        z-index: 3;
+    }
     .video_navigation{
         background-color: aqua;
         height: 100%;
         position: absolute;
         width: 50px;
-        z-index: 3;
+        z-index: 4;
     }
     .video_navigation.float_left{
         left: 0;
@@ -82,6 +93,9 @@
             <VideoCard width={videoWidth} isAtCenter={i === $videoAtCenter}/>
         {/each}
     </div>
+    {#key Math.floor($videoAtCenter)}
+        <h1 class="video_caption" transition:fly={{duration:200, y:40}}>{videos[Math.floor($videoAtCenter)]}</h1>
+    {/key}
     <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
     <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
 </div>
