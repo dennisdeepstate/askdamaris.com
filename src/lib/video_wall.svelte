@@ -1,73 +1,81 @@
 <script>
     import VideoCard from "$lib/video_card.svelte";
-    import { tweened } from 'svelte/motion';
-	import { expoOut } from 'svelte/easing';
     import { fly } from 'svelte/transition';
 
-    let viewWidth;
-    let videoWidth = 720;
     let videos = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    let videosLinear = videos.slice(0,5);
+    let viewWidth;
+    let videoMargin = 42;
+    let scrollY;
+    let videoAtCenter = 0;
+    let viewHeight;
 
-    
-
-    const videoAtCenter = tweened(1, {
-		duration: 400,
-		easing: expoOut
-	});
-
-    const canSlideRight = () => $videoAtCenter > 0;
-    const canSlideLeft = () => $videoAtCenter < videos.length - 1;
+    const canSlideRight = () => videoAtCenter > 0;
+    const canSlideLeft = () => videoAtCenter < videosLinear.length - 1;
 
     const slideVideosRight = () => {
-        if(canSlideRight()) videoAtCenter.set(Math.ceil($videoAtCenter) - 1);
-        return;
+        let nextRight = videoToRight * videoBounds;
+        if(scrollY === nextRight) nextRight = scrollY - videoBounds;
+        scrollY = nextRight;    
     }
-
     const slideVideosLeft = () => {
-        if(canSlideLeft()) videoAtCenter.set(Math.floor($videoAtCenter) + 1);
-        return;
-    }
-
-    const scrollVideos = (e) => {
-        if(e.wheelDeltaY > 0 && canSlideRight()) {
-            e.preventDefault();
-            slideVideosRight();
-        }
-        if(e.wheelDeltaY < 0 && canSlideLeft()) {
-            e.preventDefault();
-            slideVideosLeft();
-        }
+        let nextLeft = videoToLeft * videoBounds;
+        if(scrollY === nextLeft) nextLeft = scrollY + videoBounds;
+        scrollY = nextLeft;
     }
 
     $:videoWidth = viewWidth > 900 ? 720 : 480;
-    $:centerPosition = ((viewWidth / 2) - (videoWidth / 2));
-  
+    $:videoBounds = videoWidth + videoMargin;
+    $:centerPositionMargin = ((viewWidth / 2) - (videoWidth / 2));
+    $:move = centerPositionMargin - scrollY;
+    $:videoWallHeight = (videoBounds * videosLinear.length) + centerPositionMargin;
+    $:videoAtCenter = Math.min(videosLinear.length - 1, Math.max(0, Math.round(scrollY / videoBounds)));
+    $:videoToRight = Math.min(videosLinear.length - 1, Math.max(0, Math.floor(scrollY / videoBounds)));
+    $:videoToLeft = Math.min(videosLinear.length - 1, Math.max(0, Math.ceil(scrollY / videoBounds)));
+
 </script>
 
 <style>
-    .video_wall, .video_container, .video_navigation{
+    .video_wall, .video_wall_linear, .video_container_linear, .video_wall_grid, .video_navigation{
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
     .video_wall{
+        height: 100vh;
+        position: relative;
+        width: 100%;
+    }
+    .video_wall_linear{
         align-items: center;
         display: grid;
-        height: 70vh;
-        margin: 15vh 0;
+        height: 100%;
         overflow: hidden;
-        position: relative;
+        position: fixed;
         text-align: center;
         width: 100%;
     }
-    .video_container{
+    .video_container_linear{
         position: absolute;
         white-space: nowrap;
         width: 100%;
     }
+    .video_wall_grid{
+        background-color: beige;
+        bottom: 0;
+        display: grid;
+        justify-items: center;
+        gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        min-height: 100vh;
+        position: absolute;
+        transform: translate(0, 100%);
+        width: 100%;
+        z-index: 5;
+    }
     .video_caption{
-        bottom: 1em;
-        font-size: 3.5em;
+        bottom: 12rem;
+        font-size: 4rem;
         font-weight: bold;
         margin: 0;
         position: absolute;
@@ -88,19 +96,28 @@
     .video_navigation.float_right{
         right: 0;
     }
+    .hidden{
+        display:none;
+    }
 </style>
-
-<!-- <svelte:window bind:innerWidth={viewWidth} /> -->
-
-<div class="video_wall" on:mousewheel={(e)=>scrollVideos(e)} bind:clientWidth={viewWidth}>
-    <div class="video_container" style="margin-left:{centerPosition + ((videoWidth + 42) * (0 - $videoAtCenter))}px;">
+<svelte:window bind:innerHeight={viewHeight} bind:innerWidth={viewWidth} bind:scrollY={scrollY}></svelte:window>
+<div class="video_wall" style="height: {videoWallHeight}px">
+    <div class="video_wall_linear">
+        <div class="video_container_linear" style="transform: translate({move}px, 0);">
+            {#each videosLinear as video, i}
+                <VideoCard isAtCenter={i===videoAtCenter} isGrid={false} width={videoWidth}/>
+            {/each}
+        </div>
+        {#key videoAtCenter}
+            <h1 class="video_caption" transition:fly={{duration:400, y:40}}>{videosLinear[videoAtCenter]}</h1>
+        {/key}
+        <div class="video_navigation float_left" on:click={()=>{if(canSlideRight())slideVideosRight()}}></div>
+        <div class="video_navigation float_right" on:click={()=>{if(canSlideLeft())slideVideosLeft()}}></div>
+    </div>
+    <div class="video_wall_grid">
         {#each videos as video, i}
-            <VideoCard width={videoWidth} isAtCenter={i === $videoAtCenter}/>
+            <VideoCard isAtCenter={false} isGrid={true} width="400"/>
         {/each}
     </div>
-    {#key Math.floor($videoAtCenter)}
-        <h1 class="video_caption" transition:fly={{duration:400, y:40}}>{videos[Math.floor($videoAtCenter)]}</h1>
-    {/key}
-    <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
-    <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
 </div>
+
