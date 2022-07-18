@@ -1,6 +1,7 @@
 <script>
     import VideoCard from "$lib/video_card.svelte";
     import { fly } from 'svelte/transition';
+    import { onMount } from 'svelte';
 
     let videos = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
     let videosLinear = videos.slice(0,5);
@@ -9,29 +10,39 @@
     let scrollY;
     let videoAtCenter = 0;
     let viewHeight;
-
-    const canSlideRight = () => videoAtCenter > 0;
-    const canSlideLeft = () => videoAtCenter < videosLinear.length - 1;
-
+    let videoWall;
+    let wallOffset;
+    
+    
     const slideVideosRight = () => {
-        let nextRight = videoToRight * videoBounds;
-        if(scrollY === nextRight) nextRight = scrollY - videoBounds;
-        scrollY = nextRight;    
+        let nextRight = videoRight * videoBounds;
+        if(scrollOffset === nextRight) nextRight = scrollOffset - videoBounds;
+        if(nextRight < moveStart) nextRight = 0;
+        scrollY = nextRight + wallOffset;
     }
     const slideVideosLeft = () => {
-        let nextLeft = videoToLeft * videoBounds;
-        if(scrollY === nextLeft) nextLeft = scrollY + videoBounds;
-        scrollY = nextLeft;
+        let nextLeft = videoLeft * videoBounds;
+        if(scrollOffset === nextLeft) nextLeft = scrollOffset + videoBounds;
+        if(nextLeft > (moveStart - moveEnd)) nextLeft = moveStart - moveEnd;
+        scrollY = nextLeft + wallOffset;
     }
 
+    const startVideoScroll = () => scrollY >= wallOffset;
+
+    onMount(()=>{
+        wallOffset = videoWall.offsetTop;
+    });
+    $:scrollOffset = scrollY - wallOffset;
     $:videoWidth = viewWidth > 900 ? 720 : 480;
     $:videoBounds = videoWidth + videoMargin;
-    $:centerPositionMargin = ((viewWidth / 2) - (videoWidth / 2));
-    $:move = centerPositionMargin - scrollY;
-    $:videoWallHeight = (videoBounds * videosLinear.length) + centerPositionMargin;
-    $:videoAtCenter = Math.min(videosLinear.length - 1, Math.max(0, Math.round(scrollY / videoBounds)));
-    $:videoToRight = Math.min(videosLinear.length - 1, Math.max(0, Math.floor(scrollY / videoBounds)));
-    $:videoToLeft = Math.min(videosLinear.length - 1, Math.max(0, Math.ceil(scrollY / videoBounds)));
+    $:moveStart = ((viewWidth / 2) - (videoWidth / 2));
+    $:moveEnd = moveStart - (videoBounds * (videosLinear.length - 1));
+    $:move = startVideoScroll() ? Math.min(moveStart, Math.max(moveEnd, moveStart - scrollOffset)) : moveStart;
+    $:videoWallHeight = (videoBounds * videosLinear.length) + moveStart + wallOffset;
+    $:videoAtCenter = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.round(scrollOffset/ videoBounds))):0;
+    $:videoRight = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.floor(scrollOffset / videoBounds))):0;
+    $:videoLeft = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.ceil(scrollOffset / videoBounds))):1;
+
 
 </script>
 
@@ -61,20 +72,20 @@
         width: 100%;
     }
     .video_wall_grid{
-        background-color: beige;
         bottom: 0;
         display: grid;
         justify-items: center;
         gap: 1rem;
         grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
         min-height: 100vh;
+        padding: 0 5rem;
         position: absolute;
         transform: translate(0, 100%);
         width: 100%;
         z-index: 5;
     }
     .video_caption{
-        bottom: 12rem;
+        bottom: -5rem;
         font-size: 4rem;
         font-weight: bold;
         margin: 0;
@@ -101,7 +112,7 @@
     }
 </style>
 <svelte:window bind:innerHeight={viewHeight} bind:innerWidth={viewWidth} bind:scrollY={scrollY}></svelte:window>
-<div class="video_wall" style="height: {videoWallHeight}px">
+<div class="video_wall" style="height: {videoWallHeight}px; top: {startVideoScroll() ? 0 - wallOffset : 0-scrollY}px;" bind:this={videoWall}>
     <div class="video_wall_linear">
         <div class="video_container_linear" style="transform: translate({move}px, 0);">
             {#each videosLinear as video, i}
@@ -109,10 +120,10 @@
             {/each}
         </div>
         {#key videoAtCenter}
-            <h1 class="video_caption" transition:fly={{duration:400, y:40}}>{videosLinear[videoAtCenter]}</h1>
+            <h1 class="video_caption" style="transform: translate(0, {-1 * ((viewHeight - (videoWidth * 0.5625))/2)}px);" transition:fly={{duration:600, y:40}}>{videosLinear[videoAtCenter]}</h1>
         {/key}
-        <div class="video_navigation float_left" on:click={()=>{if(canSlideRight())slideVideosRight()}}></div>
-        <div class="video_navigation float_right" on:click={()=>{if(canSlideLeft())slideVideosLeft()}}></div>
+        <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
+        <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
     </div>
     <div class="video_wall_grid">
         {#each videos as video, i}
