@@ -32,17 +32,18 @@
     onMount(()=>{
         wallOffset = videoWall.offsetTop;
     });
-    $:scrollOffset = scrollY - wallOffset;
+
     $:videoWidth = viewWidth > 900 ? 720 : 480;
     $:videoBounds = videoWidth + videoMargin;
     $:moveStart = ((viewWidth / 2) - (videoWidth / 2));
     $:moveEnd = moveStart - (videoBounds * (videosLinear.length - 1));
+    $:scrollOffset = scrollY - wallOffset;
+    $:wallPositionTop = startVideoScroll() ? 0 - wallOffset : 0 - scrollY;
     $:move = startVideoScroll() ? Math.min(moveStart, Math.max(moveEnd, moveStart - scrollOffset)) : moveStart;
     $:videoWallHeight = (videoBounds * videosLinear.length) + moveStart + wallOffset;
     $:videoAtCenter = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.round(scrollOffset/ videoBounds))):0;
     $:videoRight = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.floor(scrollOffset / videoBounds))):0;
     $:videoLeft = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.ceil(scrollOffset / videoBounds))):1;
-
 
 </script>
 
@@ -85,20 +86,21 @@
         z-index: 5;
     }
     .video_caption{
-        bottom: -5rem;
-        font-size: 4rem;
+        bottom: -4.5rem;
+        font-size: 3rem;
         font-weight: bold;
         margin: 0;
         position: absolute;
-        text-transform: uppercase;
+        text-transform: lowercase;
         width: 100%;
         z-index: 3;
     }
     .video_navigation{
-        background-color: aqua;
+        background-color: white;
         height: 100%;
+        opacity: 0.5;
         position: absolute;
-        width: 50px;
+        width: 5rem;
         z-index: 4;
     }
     .video_navigation.float_left{
@@ -107,12 +109,9 @@
     .video_navigation.float_right{
         right: 0;
     }
-    .hidden{
-        display:none;
-    }
 </style>
 <svelte:window bind:innerHeight={viewHeight} bind:innerWidth={viewWidth} bind:scrollY={scrollY}></svelte:window>
-<div class="video_wall" style="height: {videoWallHeight}px; top: {startVideoScroll() ? 0 - wallOffset : 0-scrollY}px;" bind:this={videoWall}>
+<section class="video_wall" id="videos" style="height: {videoWallHeight}px; top:{wallPositionTop}px;" bind:this={videoWall}>
     <div class="video_wall_linear">
         <div class="video_container_linear" style="transform: translate({move}px, 0);">
             {#each videosLinear as video, i}
@@ -130,5 +129,5 @@
             <VideoCard isAtCenter={false} isGrid={true} width="400"/>
         {/each}
     </div>
-</div>
+</section>
 

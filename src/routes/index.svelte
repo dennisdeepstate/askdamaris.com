@@ -1,6 +1,7 @@
 <script>
+    import Home from "$lib/home.svelte";
     import VideoWall from "$lib/video_wall.svelte";
 </script>
-<div style="height:100vh;"></div>
+<Home />
 <VideoWall />
 
