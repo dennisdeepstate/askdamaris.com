@@ -73,6 +73,7 @@
         width: 100%;
     }
     .video_wall_grid{
+        background-color: aqua;
         bottom: 0;
         display: grid;
         justify-items: center;
