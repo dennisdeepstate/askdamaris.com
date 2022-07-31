@@ -1,8 +1,6 @@
 <script>
     let y;
     let viewHeight;
-    $:deno = viewHeight/2;
-    $:val= Math.min(2,Math.max(1,(y/deno)+1));
     $:scrollVal = Math.min(viewHeight,Math.max(0,y));
 
 
@@ -41,5 +39,4 @@
     <div class="chart" style="transform: scale(1.05) translate(0, {0.3 * scrollVal}px);  z-index: 3;"></div>
     <div class="chart" style="transform: scale(1.2) translate(0, {0.2 * scrollVal}px); z-index: 5;"></div>
     <div class="chart" style="transform: translate(0, {0.25 * scrollVal}px); z-index: 4;"></div>
-
 </div>

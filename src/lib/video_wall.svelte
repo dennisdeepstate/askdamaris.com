@@ -47,7 +47,6 @@
     * @param {integer}  startTrans - scrollY position at which transition starts.
     */
     $:startTrans = ((wallOffset + videoWallHeight) - videoGridHeight);
-
     /**
     * @param {integer}  endTrans - scrollY position at which transition ends.
     */
@@ -58,11 +57,29 @@
     $:moveStart = ((viewWidth / 2) - (videoWidth / 2));
     $:moveEnd = moveStart - (videoBounds * (videosLinear.length - 1));
     $:scrollOffset = scrollY - wallOffset;
+    /**
+    * @param {integer}  move - value of top position of video wall.
+    */
     $:wallPositionTop = startVideoScroll() ? 0 - wallOffset : 0 - scrollY;
+    /**
+    * @param {integer}  move - value of translateX position of linear video container.
+    */
     $:move = startVideoScroll() ? Math.min(moveStart, Math.max(moveEnd, moveStart - scrollOffset)) : moveStart;
+    /**
+    * @param {integer}  videoWallHeight - height of video wall equal to total length of videos in horizontal scroll.
+    */
     $:videoWallHeight = (videoBounds * videosLinear.length ) + videoWidth/2;
+    /**
+    * @param {integer}  videoAtCenter - array position of video at center of screen.
+    */
     $:videoAtCenter = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.round(scrollOffset/ videoBounds))):0;
+    /**
+    * @param {integer}  videoRight - array position of video to the right of video at center of screen
+    */
     $:videoRight = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.floor(scrollOffset / videoBounds))):0;
+     /**
+    * @param {integer}  videoRight - array position of video to the left of video at center of screen
+    */
     $:videoLeft = startVideoScroll() ? Math.min(videosLinear.length - 1, Math.max(0, Math.ceil(scrollOffset / videoBounds))):1;
 
 </script>
