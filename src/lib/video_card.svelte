@@ -1,7 +1,6 @@
 <script>
     export let width;
     export let isAtCenter;
-    export let isGrid = false;
 </script>
 
 <style>
@@ -17,8 +16,5 @@
     }
 </style>
 
-<div    class="video_card"
-        style="height: {width * 0.5625}px; width: {width}px;
-        {!isGrid ? "margin-right: 40px;" : ""}
-        {isAtCenter ? "transform: scale(1.2); z-index:2;" : "z-index:1;"}">
+<div class="video_card" style="height: {width * 0.5625}px; width: {width}px; {isAtCenter ? "transform: scale(1.2); z-index:2;" : "z-index:1;"}">
 </div>

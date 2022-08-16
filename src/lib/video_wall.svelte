@@ -1,27 +1,30 @@
 <script>
+    import scrollTransition from '$lib/scrollTransition.js';
     import VideoCard from "$lib/video_card.svelte";
     import { fly } from 'svelte/transition';
     import { onMount } from 'svelte';
 
-    let videos = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    export let videos = ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"];
+    /**
+    * @param {array}  videosLinear - array containing the first (5) videos. These videos are placed in the linear video container
+    */
     let videosLinear = videos.slice(0,5);
+    /**
+    * @param {integer}  viewWidth - width of the client's window. Value is bound to svelte:window
+    */
     let viewWidth;
-    let videoMargin = 42;
+    let videoMargin = 0;
     let scrollY;
     let videoAtCenter = 0;
     let viewHeight;
     let videoWall;
     let wallOffset;
-    let videoGridHeight;
-    
-    const scrollTransition = (transitionLength = 1, startPosition = 0, endPosition = viewHeight) => {
+    let startTransition;
+    let endTransition;
 
-        let multiplier = transitionLength / (endPosition - startPosition);
-        let transitionScrollPosition = Math.min(endPosition, Math.max(startPosition, scrollY));
-
-        return (transitionScrollPosition - startPosition) * multiplier;
-
-    }
+    onMount(() => {
+        wallOffset = videoWall.offsetTop;
+    });
     const slideVideosRight = () => {
         let nextRight = videoRight * videoBounds;
 
@@ -39,26 +42,29 @@
         scrollY = nextLeft + wallOffset;
     }
     const startVideoScroll = () => scrollY >= wallOffset;
+    
 
-    onMount( () => wallOffset = videoWall.offsetTop );
-
-    //transition from liner video container to grid video container
-    /**
-    * @param {integer}  startTrans - scrollY position at which transition starts.
-    */
-    $:startTrans = ((wallOffset + videoWallHeight) - videoGridHeight);
-    /**
-    * @param {integer}  endTrans - scrollY position at which transition ends.
-    */
-    $:endTrans = startTrans + viewHeight;
-
+    $:startTransition = wallOffset + (videoBounds * (videosLinear.length - 1));
+    $:endTransition = startTransition + viewHeight * 1.5;
     $:videoWidth = viewWidth > 900 ? 720 : 480;
+    /**
+    * @param {integer}  videoBounds - total width occupied by a video container
+    */
     $:videoBounds = videoWidth + videoMargin;
+    /**
+    * @param {integer}  moveStart - max value of translateX position of linear video container
+    */
     $:moveStart = ((viewWidth / 2) - (videoWidth / 2));
+    /**
+    * @param {integer}  moveEnd - min value of translateX position of linear video container
+    */
     $:moveEnd = moveStart - (videoBounds * (videosLinear.length - 1));
+    /**
+    * @param {integer}  scrollOffset - value of vertical scroll beginning from when the video wall reaches the top of the page
+    */
     $:scrollOffset = scrollY - wallOffset;
     /**
-    * @param {integer}  move - value of top position of video wall.
+    * @param {integer}  wallPosition - value of top position of video wall.
     */
     $:wallPositionTop = startVideoScroll() ? 0 - wallOffset : 0 - scrollY;
     /**
@@ -68,7 +74,7 @@
     /**
     * @param {integer}  videoWallHeight - height of video wall equal to total length of videos in horizontal scroll.
     */
-    $:videoWallHeight = (videoBounds * videosLinear.length ) + videoWidth/2;
+    $:videoWallHeight = (videoBounds * videosLinear.length ) + videoWidth;
     /**
     * @param {integer}  videoAtCenter - array position of video at center of screen.
     */
@@ -85,7 +91,7 @@
 </script>
 
 <style>
-    .video_wall, .video_wall_linear, .video_container_linear, .video_wall_grid, .video_navigation{
+    .video_wall, .video_wall_linear, .video_container_linear, .video_navigation{
         box-sizing: border-box;
         margin: 0;
         padding: 0;
@@ -107,18 +113,6 @@
         position: absolute;
         white-space: nowrap;
         width: 100%;
-    }
-    .video_wall_grid{
-        background-color: white;
-        display: grid;
-        justify-items: center;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-        min-height: 100vh;
-        padding: 0 5rem;
-        position: absolute;
-        width: 100%;
-        z-index: 5;
     }
     .video_caption{
         bottom: -4.5rem;
@@ -147,10 +141,10 @@
 </style>
 <svelte:window bind:innerHeight={viewHeight} bind:innerWidth={viewWidth} bind:scrollY={scrollY}></svelte:window>
 <section class="video_wall" id="videos" style="height: {videoWallHeight}px; top:{wallPositionTop}px;" bind:this={videoWall}>
-    <div class="video_wall_linear" style="opacity: {1 - scrollTransition(0.9, startTrans, endTrans, scrollY)}; transform: scale({1 - scrollTransition(0.1, startTrans, endTrans, scrollY)}) translate(0 ,{-1 * scrollTransition(viewHeight * 0.275, startTrans, endTrans, scrollY)}px);">
+    <div class="video_wall_linear" style="transform: scale({1 - scrollTransition(0.4, startTransition, endTransition, scrollY)}) translate(0 ,{1 * scrollTransition(viewHeight * 0.4, startTransition, endTransition, scrollY)}px);">
         <div class="video_container_linear" style="transform: translate({move}px, 0);">
             {#each videosLinear as video, i}
-                <VideoCard isAtCenter={i===videoAtCenter} isGrid={false} width={videoWidth}/>
+                <VideoCard isAtCenter={i===videoAtCenter} width={videoWidth}/>
             {/each}
         </div>
         {#key videoAtCenter}
@@ -159,10 +153,6 @@
         <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
         <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
     </div>
-    <div bind:clientHeight={videoGridHeight} class="video_wall_grid" style="top:{wallOffset + videoWallHeight}px; opacity: {scrollTransition(1, startTrans, endTrans, scrollY)};">
-        {#each videos as video, i}
-            <VideoCard isAtCenter={false} isGrid={true} width="400"/>
-        {/each}
-    </div>
 </section>
+
 
