@@ -10,6 +10,6 @@
         z-index: 10;
     }
 </style>
-<div class="loading" style="display: {display ? '':'none'};">
+<div class="loading" style="display: {display ? 'block':'none'};">
     loading....
 </div>
