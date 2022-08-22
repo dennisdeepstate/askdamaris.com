@@ -1,18 +1,9 @@
-import { createHash, randomUUID } from 'crypto';
-import * as cookie from 'cookie';
+import { createHash } from 'crypto';
 import connectToDatabase from '$lib/database';
-import { connectToSessionDatabase, expiry } from '$lib/sessionDatabase';
+import { UserCookie, createCookie} from '$lib/createCookie.js';
 
 const hashPassword = (pass) =>{
     return createHash('sha256').update(pass).digest('hex');
-}
-
-class UserCookie {
-    constructor(email, ip, userAgent){
-        this.email = email;
-        this.ip = ip;
-        this.userAgent = userAgent
-    }
 }
 
 export async function POST(event) {
@@ -34,22 +25,13 @@ export async function POST(event) {
             return;
         }
 
-        const cookieId = randomUUID();
         const userCookie = new UserCookie(user.email, event.clientAddress, event.request.headers.get('user-agent'));
-        async function saveCookie(sdb){
-            await sdb.SETEX(JSON.stringify(cookieId), expiry, JSON.stringify(userCookie))
-        }
-        await connectToSessionDatabase(saveCookie);
-
+        const setCookie = await createCookie(userCookie);
+        if(!setCookie) return;
         response.status = 200;
         response.body = [{success: 'Logged in successfully!'}];
-        response.headers = {'set-cookie': cookie.serialize('askdamaris_id', cookieId, {
-            httpOnly: true,
-            maxAge: expiry,
-            sameSite: 'strict',
-            path: '/'
-            })
-        };
+        response.headers = setCookie;
+        
     }
 
     await connectToDatabase(loginUser);   

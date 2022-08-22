@@ -4,11 +4,11 @@ import { createWriteStream } from 'fs';
 const expiry = 60 * 60 * 24;
 const logFile = "errorlogs/sessiondb.txt";
 
-async function connectToSessionDatabase(callBack){
+async function connectToSessionDatabase(callBack, params){
     try{
         const client = createClient();
         await client.connect();
-        await callBack(client);
+        await callBack(client, params);
     }catch(err){
         const stream = createWriteStream(logFile,{flags: "a"});
         stream.write(`${Math.round(+new Date()/1000)}: ${err} \n`)

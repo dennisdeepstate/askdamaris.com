@@ -1,21 +1,12 @@
-import { createHash, randomUUID } from 'crypto';
-import * as cookie from 'cookie';
+import { createHash } from 'crypto';
 import validateForm from '$lib/validateForm.js';
 import connectToDatabase from '$lib/database';
-import { connectToSessionDatabase, expiry } from '$lib/sessionDatabase.js'
+import { UserCookie, createCookie} from '$lib/createCookie.js';
 
 class User {
     constructor(email, passwordHash){
       this.email = email;
       this.passwordHash = passwordHash;
-    }
-}
-
-class UserCookie {
-    constructor(email, ip, userAgent){
-        this.email = email;
-        this.ip = ip;
-        this.userAgent = userAgent
     }
 }
 
@@ -39,21 +30,12 @@ export async function POST(event) {
             return;
         }
         if (await db.collection('users').insertOne(newUser)) {
-            const cookieId = randomUUID();
             const userCookie = new UserCookie(newUser.email, event.clientAddress, event.request.headers.get('user-agent'));
-            async function saveCookie(sdb){
-                await sdb.SETEX(JSON.stringify(cookieId), expiry, JSON.stringify(userCookie))
-            }
-            await connectToSessionDatabase(saveCookie);
+            const setCookie = await createCookie(userCookie);
+            if(!setCookie) return;
             response.status = 200;
             response.body = [{success: 'Your account has been created successfully!'}];
-            response.headers = {'set-cookie': cookie.serialize('askdamaris_id', cookieId, {
-                httpOnly: true,
-                maxAge: expiry,
-                sameSite: 'strict',
-                path: '/'
-                })
-            };
+            response.headers = setCookie;
         }
     }
 
