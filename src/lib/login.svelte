@@ -1,5 +1,4 @@
 <script>
-    import validateForm from '$lib/validateForm.js';
     import Loading from '$lib/loading.svelte';
 
     let email;
@@ -7,24 +6,19 @@
     let loading = false;
    
     const submitForm = async() => {
-        const newUser = {
+        const User = {
             email,
             password
         }
-        let messages = validateForm(newUser);
-        if(messages.length > 0){
-            console.log(messages) 
-            return
-        };
         const options = {
             headers: {'Content-Type': 'application/json'},
             method: 'POST',
-            body: JSON.stringify(newUser)
+            body: JSON.stringify(User)
         };
         try{
             loading = true;
-            const addUser = await fetch(`auth/add-user`, options);
-            const response = await addUser.json();
+            const login = await fetch(`auth/login`, options);
+            const response = await login.json();
             loading = false;
             console.log(response);
         }catch(error){
@@ -42,5 +36,5 @@
     <input type="email" name="email" id="email" placeholder="mimi@example.com" bind:value={email} required/>
     <label for="password">Password:</label>
     <input type="password" name="password" id="password" bind:value={password} required/>
-    <input type="submit" value="Register"/>
+    <input type="submit" value="Login"/>
 </form>

@@ -6,7 +6,7 @@
         if(typeof video === 'undefined') return;
         const formData = new FormData();
   
-        formData.append(`video`, video[0]);
+        formData.append(``, video[0]);
         const options = {
             method: 'POST',
             body: formData

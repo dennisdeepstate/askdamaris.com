@@ -6,6 +6,7 @@
         background-color: white;
         height: 100vh;
         position: fixed;
+        top: 0;
         width: 100vh;
         z-index: 10;
     }
