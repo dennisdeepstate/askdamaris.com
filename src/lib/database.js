@@ -7,13 +7,13 @@ const uri = MONGODB_URI;
 const dbName = DB_NAME;
 const client = new MongoClient(uri);
 
-const connectToDatabase = async(callBack) => {
+const connectToDatabase = async(callBack, data) => {
     try {
         await client.connect();
-        await callBack(client.db(dbName));
+        return await callBack(client.db(dbName), data);
     }catch(err){
         const stream = createWriteStream(logFile,{flags: "a"});
-        stream.write(`${Math.round(+new Date()/1000)}: ${err} \n`)
+        stream.write(`${Math.round(+new Date()/1000)}: $lib/database.js: err: ${err} \n`)
     }finally{
         await client.close()
     }

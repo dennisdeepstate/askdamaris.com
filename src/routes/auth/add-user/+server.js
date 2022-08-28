@@ -1,5 +1,5 @@
 import { createHash } from 'crypto';
-import validateForm from '$lib/validateForm.js';
+import { validateRegistrationForm } from '$lib/validateForm.js';
 import connectToDatabase from '$lib/database';
 import { UserCookie, createCookie} from '$lib/createCookie.js';
 
@@ -20,7 +20,7 @@ export async function POST(event) {
         body: [ { error:"an error occured on the server please try again later" } ]
     };
     let form = await event.request.json();
-    let formErrors = validateForm(form);
+    let formErrors = validateRegistrationForm(form);
 
     async function addUser(db) {
         const newUser = new User(form.email, hashPassword(form.password));
