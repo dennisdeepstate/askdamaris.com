@@ -13,9 +13,9 @@ const connectToDatabase = async(callBack, data) => {
         return await callBack(client.db(dbName), data);
     }catch(err){
         const stream = createWriteStream(logFile,{flags: "a"});
-        stream.write(`${Math.round(+new Date()/1000)}: $lib/database.js: err: ${err} \n`)
+        stream.write(`${new Date()}: $lib/database.js: err: ${err} \n`)
     }finally{
-        await client.close()
+        await client.close();
     }
 }
 

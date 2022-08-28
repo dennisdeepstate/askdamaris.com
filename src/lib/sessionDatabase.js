@@ -1,7 +1,7 @@
 import { createClient } from 'redis';
 import { createWriteStream } from 'fs';
 
-const expiry = 60 * 60 * 24;
+const expiry = 60 * 60 * 24 * 2;
 const logFile = "errorlogs/sessiondb.txt";
 
 async function connectToSessionDatabase(callBack, data){
@@ -11,7 +11,7 @@ async function connectToSessionDatabase(callBack, data){
         await callBack(client, data);
     }catch(err){
         const stream = createWriteStream(logFile,{flags: "a"});
-        stream.write(`${Math.round(+new Date()/1000)}: $lib/sessionDatabase.js: err: ${err} \n`)
+        stream.write(`${new Date()}: $lib/sessionDatabase.js: err: ${err} \n`)
     }
 }
 

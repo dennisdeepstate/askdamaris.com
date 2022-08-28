@@ -38,13 +38,13 @@ export async function POST(event){
             const bunnyResponseJson = await fetch(url, options);
             const bunnyResponse = await bunnyResponseJson.json();
             if(!bunnyResponse.guid){
-                bunnyLogStream.write(`${Math.round(+new Date()/1000)}: admin/add-video/+server.js: bunnyResponse: ${JSON.stringify(bunnyResponse)} \n`);
+                bunnyLogStream.write(`${new Date()}: admin/add-video/+server.js: bunnyResponse: ${JSON.stringify(bunnyResponse)} \n`);
                 return;
             }
             form.video = bunnyResponse.guid;
             form.videoPath = videoFilePath;
         }catch(err){
-            bunnyLogStream.write(`${Math.round(+new Date()/1000)}: admin/add-video/+server.js: err:  ${err} \n`);
+            bunnyLogStream.write(`${new Date()}: admin/add-video/+server.js: err:  ${err} \n`);
         }
 
         if(! await connectToDatabase(async function(db){ return await db.collection('videos').insertOne(form) })) return;
@@ -62,8 +62,8 @@ export async function POST(event){
             const bunnyResponseJson = await fetch(`${url}/${form.video}`, uploadOptions);
             const bunnyResponse = await bunnyResponseJson.json();
             if(!bunnyResponse.success) return;
-        }catch(err){
-            bunnyLogStream.write(`${Math.round(+new Date()/1000)}: admin/add-video/+server.js: err:  ${err} \n`);
+        }catch(err2){
+            bunnyLogStream.write(`${new Date()}: admin/add-video/+server.js: err2:  ${err2} \n`);
         }
         
         response.status = 200;
