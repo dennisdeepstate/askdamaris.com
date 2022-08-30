@@ -16,14 +16,13 @@ npm run dev
 ## .env
 
 ```bash
-MONGODB_URI = " "
-DB_NAME = " "
-NODE_ENV = "development" // "production", "testing"
-DEV_URL = "http://localhost:3000"
-PROD_URL = "https://askdamaris.com"
-
 BUNNY_LIB_ID = " "
 BUNNY_KEY = " "
+DB_NAME = " "
+MONGODB_URI = " "
+PUBLIC_NODE_ENV = "development" // "production", "testing"
+PUBLIC_DEV_URL = "http://localhost:5173"
+PUBLIC_PROD_URL = "https://askdamaris.com"
 ```
 ## Building
 

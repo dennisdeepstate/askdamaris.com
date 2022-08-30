@@ -1,6 +1,7 @@
 <script>
     export let width;
     export let isAtCenter;
+    export let video;
 </script>
 
 <style>
@@ -14,7 +15,11 @@
         transition: 200ms ease-out;
         z-index: 1;
     }
+    .video_card img{
+        width: 100%;
+    }
 </style>
 
 <div class="video_card" style="height: {width * 0.5625}px; width: {width}px; {isAtCenter ? "transform: scale(1.2); z-index:2;" : "z-index:1;"}">
+    <img src="https://vz-2a55d88c-1d4.b-cdn.net/{video.videoId}/thumbnail.jpg" alt={video.title} />
 </div>
