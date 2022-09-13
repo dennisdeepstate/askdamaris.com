@@ -8,13 +8,13 @@
         display: grid;
         grid-template-columns: 2fr 5fr;
         height: calc(100% - 5rem);
-        padding: 10rem 0 0 0;
+        padding: 7.5rem 0 0 0;
         position: relative;
         width: 100%;
     }
     h1{
-        font-size: 2.5rem;
-        line-height: 2.5rem;
+        font-size: 2rem;
+        line-height: 2rem;
         margin: 0;
     }
     .welcome_message{
@@ -25,7 +25,7 @@
         margin: 0 0 0.5rem 0;
     }
 </style>
-<section class="intro">
+<section class="intro" id="intro">
     <div class="intro_info">
         <h1>This is your opportunity for self actualisation</h1>
         <div class="welcome_message">

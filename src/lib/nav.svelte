@@ -33,9 +33,9 @@
         <img src="img_logo_askdamaris.png" alt="ask damaris logo"/>
     </div>
     <ul>
-        <li>home</li>
-        <li>about</li>
-        <li>pricing</li>
-        <li>videos</li>
+        <li><a href="#intro">home</a></li>
+        <li><a href="#about">about</a></li>
+        <li><a href="#videos">videos</a></li>
+        <li><a href="#pricing">pricing</a></li>
     </ul>
 </nav>

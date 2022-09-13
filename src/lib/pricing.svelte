@@ -1,35 +1,30 @@
-<script>
-    import scrollTransition from '$lib/scrollTransition.js';
-    import { onMount } from 'svelte';
-
-    let pricing;
-    let viewHeight;
-    let scrollY;
-    let startTransition;
-    let endTransition;
-    onMount( () => {
-        startTransition = pricing.offsetTop ;
-        endTransition = startTransition + viewHeight * 1.5;
-    });
-
-</script>
 <style>
     #pricing{
         box-sizing: border-box;
-        border-top: 1px solid red;
-        display: grid;
-        justify-items: center;
-        gap: 1rem;
-        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
         margin: 0;
         min-height: 100vh;
-        padding: 0 5rem;
+        padding: 5vh 5rem 5vh 5rem;
         position: relative;
         width: 100%;
         z-index: 1;
     }
+    .price_chart{
+        box-shadow: 4px 4px 12px rgba(25, 25, 25, 0.1);
+        height: 90vh;
+        width: 100%;
+    }
+    .price_chart h1{
+        text-align: center;
+        z-index: inherit;
+    }
 </style>
-<svelte:window bind:innerHeight={viewHeight} bind:scrollY={scrollY}></svelte:window>
-<section id="pricing" style="opacity: {scrollTransition(1, startTransition, endTransition, scrollY)};" bind:this={pricing}>
+
+<section id="pricing">
+
+    <div class="price_chart">
+
+        <h1>Pricing</h1>
+
+    </div>
 
 </section>

@@ -5,6 +5,7 @@
     button{
         border: none;
         box-sizing: border-box;
+        cursor: pointer;
         font-family: 'Play Fair', serif;
         height: 3rem;
         margin: 0;

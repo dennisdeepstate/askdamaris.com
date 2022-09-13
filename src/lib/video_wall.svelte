@@ -22,8 +22,11 @@
     let startTransition;
     let endTransition;
 
-    onMount(() => {
+    function setWallOffset(){
         wallOffset = videoWall.offsetTop;
+    }
+    onMount(() => {
+        setWallOffset();
     });
     const slideVideosRight = () => {
         let nextRight = videoRight * videoBounds;
@@ -99,6 +102,7 @@
     .video_wall{
         position: relative;
         width: 100%;
+        z-index: 2;
     }
     .video_wall_linear{
         align-items: center;
@@ -115,9 +119,7 @@
         width: 100%;
     }
     .video_title{
-        bottom: -4.5rem;
-        font-size: 3rem;
-        font-weight: bold;
+        bottom: -3rem;
         margin: 0;
         position: absolute;
         text-transform: lowercase;
@@ -126,10 +128,11 @@
     }
     .video_navigation{
         background-color: white;
+        cursor: pointer;
         height: 100%;
         opacity: 0.5;
         position: absolute;
-        width: 5rem;
+        width: 4rem;
         z-index: 4;
     }
     .video_navigation.float_left{
@@ -138,25 +141,31 @@
     .video_navigation.float_right{
         right: 0;
     }
+    .title{
+        transform: translateY(-40vh);
+    }
 </style>
-<svelte:window bind:innerHeight={viewHeight} bind:innerWidth={viewWidth} bind:scrollY={scrollY}></svelte:window>
-{#if videosLinear.length > 0}
+<svelte:window bind:innerHeight={viewHeight} bind:innerWidth={viewWidth} bind:scrollY={scrollY} on:resize={ () => setWallOffset() }></svelte:window>
+
 <section class="video_wall" id="videos" style="height: {videoWallHeight}px; top:{wallPositionTop}px;" bind:this={videoWall}>
     <div class="video_wall_linear" style="transform: scale({1 - scrollTransition(0.4, startTransition, endTransition, scrollY)}) translate(0 ,{1 * scrollTransition(viewHeight * 0.4, startTransition, endTransition, scrollY)}px);">
-        <div class="video_container_linear" style="transform: translate({move}px, 0);">
-            {#each videosLinear as video, i}
-                <VideoCard isAtCenter={i===videoAtCenter} width={videoWidth} video={video} />
-            {/each}
-        </div>
-        {#key videoAtCenter}
-            <h1 class="video_title" style="transform: translate(0, {-1 * ((viewHeight - (videoWidth * 0.5625))/2)}px);" transition:fly={{duration:600, y:40}}>{videosLinear[videoAtCenter].title}</h1>
-        {/key}
-        <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
-        <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
+        {#if videosLinear.length > 0}
+            <h1 class="title" style="opacity: {1 - scrollTransition(1 , startTransition, startTransition + viewHeight, scrollY)};">Video tutorials</h1>
+            <div class="video_container_linear" style="transform: translate({move}px, 0);">
+                {#each videosLinear as video, i}
+                    <VideoCard isAtCenter={i===videoAtCenter} width={videoWidth} video={video} />
+                {/each}
+            </div>
+            {#key videoAtCenter}
+                <h1 class="video_title" style="opacity: {1 - scrollTransition(1 , startTransition, startTransition + viewHeight, scrollY)}; transform: translate(0, {-1 * ((viewHeight - (videoWidth * 0.5625))/2)}px);" transition:fly={{duration:600, y:40}}>{videosLinear[videoAtCenter].title}</h1>
+            {/key}
+            <div class="video_navigation float_left" on:click={()=>{slideVideosRight()}}></div>
+            <div class="video_navigation float_right" on:click={()=>{slideVideosLeft()}}></div>
+        {:else}
+            <h1 class="title">amazing things are coming</h1>
+        {/if}
     </div>
 </section>
-{:else}
-<h1>amazing things are coming</h1>
-{/if}
+
 
 

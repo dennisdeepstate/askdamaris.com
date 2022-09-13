@@ -2,17 +2,16 @@
     let y;
     let viewHeight;
     $:scrollVal = Math.min(viewHeight,Math.max(0,y));
-
-
 </script>
 <style>
     .graphs{ 
         box-sizing: border-box;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
         height: 100%;
         margin: 0 auto;
         padding: 0 0 0 5rem;
         position: relative;
-        max-width: calc(780px + 5rem);
     }
     .chart{
         border: 1px solid red;
@@ -23,10 +22,10 @@
         border-radius: 3px;
         box-shadow: 4px 4px 12px rgba(25, 25, 25, 0.1);
         display: inline-block;
-        height: 240px;
+        height: 15rem;
         margin: 0;
         position: relative;
-        width: 240px;
+        width: 15rem;
         z-index: 1;
     }
 </style>
