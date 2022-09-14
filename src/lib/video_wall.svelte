@@ -110,7 +110,7 @@
         height: 100%;
         overflow: hidden;
         position: fixed;
-        text-align: center;
+        text-align: left;
         width: 100%;
     }
     .video_container_linear{
@@ -122,6 +122,7 @@
         bottom: -3rem;
         margin: 0;
         position: absolute;
+        text-align: center;
         text-transform: lowercase;
         width: 100%;
         z-index: 3;
@@ -142,6 +143,7 @@
         right: 0;
     }
     .title{
+        margin-left: 5rem;
         transform: translateY(-40vh);
     }
 </style>

@@ -30,7 +30,7 @@
         <h1>This is your opportunity for self actualisation</h1>
         <div class="welcome_message">
             <p>Ask damaris is a platform that gives individuals an opportunity for self-actualisation and also supports businesses in their operations to achieve their desired outcomes.</p>
-            <p>We offer one on one consultations sessions, training and workshops for teams and business process outsourcing.</p>
+            <p>We offer one on one consultation sessions, training and workshops for teams and business process outsourcing.</p>
         </div>
         <Button btnValue="Explore more"></Button>
     </div>

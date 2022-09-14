@@ -9,12 +9,10 @@
         z-index: 1;
     }
     .price_chart{
-        box-shadow: 4px 4px 12px rgba(25, 25, 25, 0.1);
         height: 90vh;
         width: 100%;
     }
     .price_chart h1{
-        text-align: center;
         z-index: inherit;
     }
 </style>
